@@ -4,34 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteer Hub</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f7f6;
-            padding: 50px;
-        }
-        h1 { color: #2c3e50; }
-        p { color: #7f8c8d; font-size: 18px; }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            max-width: 400px;
-            margin: 20px auto;
-        }
+        body { background-color: #f3f4f6; }
     </style>
 </head>
-<body>
+<body class="p-6 md:p-12">
 
-    <h1>🚀 Welcome to Volunteer Hub</h1>
-    <p>My high school passion project is officially alive!</p>
+    <!-- Header Section -->
+    <header class="max-w-4xl mx-auto text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">🚀 Student Volunteer Hub</h1>
+        <p class="text-lg text-gray-600">Find and track local volunteer opportunities for high school students.</p>
+    </header>
 
-    <div class="card">
-        <h3>🌱 Coming Soon</h3>
-        <p>Automated volunteer tracking for Environment, Healthcare, and Animal Welfare.</p>
-    </div>
+    <!-- Search and Filter Controls -->
+    <section class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search Bar -->
+            <input type="text" id="searchInput" oninput="filterOpportunities()" placeholder="🔍 Search opportunities (e.g., animal, hospital)..." class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            
+            <!-- Category Filter Dropdown -->
+            <select id="categoryFilter" onchange="filterOpportunities()" class="w-full md:w-1/4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">All Categories</option>
+                <option value="Environment">🌿 Environment</option>
+                <option value="Healthcare">🏥 Healthcare</option>
+                <option value="Animal Welfare">🐾 Animal Welfare</option>
+                <option value="Education">📚 Education</option>
+            </select>
 
+            <!-- Age Filter Dropdown -->
+            <select id="ageFilter" onchange="filterOpportunities()" class="w-full md:w-1/4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">Any Minimum Age</option>
+                <option value="14">Age 14+</option>
+                <option value="15">Age 15+</option>
+                <option value="16">Age 16+</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Opportunities Grid Container -->
+    <main class="max-w-4xl mx-auto">
+        <div id="opportunitiesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Cards will be injected here automatically by Javascript -->
+        </div>
+        <!-- Message if no results found -->
+        <div id="noResults" class="hidden text-center text-gray-500 mt-8 text-xl">
+            No opportunities match your search. 😕
+        </div>
+    </main>
+
+    <!-- Coding Magic: Javascript to make it interactive -->
+    <script>
+        // Fake data to simulate our automated database for now
+        const opportunities = [
+            { title: "Community Tree Planting", org: "Green Council", category: "Environment", location: "High Park", age: 14, desc: "Help us plant 100 new native trees to restore local park ecosystems. Snacks provided!" },
+            { title: "Hospital Elder Care Assistant", org: "City Health Network", category: "Healthcare", location: "General Hospital", age: 16, desc: "Visit with elderly patients, read books, and help guide visitors around the building." },
+            { title: "Kitten Socializer & Care", org: "Humane Society", category: "Animal Welfare", location: "Downtown Shelter", age: 15, desc: "Spend time socializing rescued kittens, cleaning cages, and prepping food bowls." },
+            { title: "After-School Homework Tutor", org: "Community Learning Center", category: "Education", location: "Public Library", age: 14, desc: "Help elementary students with math, reading, and science homework after school." },
+            { title: "Food Bank Packing Team", org: "Daily Bread Food Bank", category: "Healthcare", location: "West Warehouse", age: 14, desc: "Sort and pack non-perishable food items into emergency hampers for local families." },
+            { title: "Urban Ravine Clean-up", org: "Eco-Youth Alliance", category: "Environment", location: "Don Valley", age: 15, desc: "Remove plastic waste and invasive species from local waterways to protect wildlife." }
+        ];
+
+        // Function that automatically draws the cards on the screen
+        function displayOpportunities(data) {
+            const grid = document.getElementById("opportunitiesGrid");
+            const noResults = document.getElementById("noResults");
+            grid.innerHTML = ""; // Clear existing cards
+
+            if (data.length === 0) {
+                noResults.classList.remove("hidden");
+                return;
+            } else {
+                noResults.classList.add("hidden");
+            }
+
+            data.forEach(item => {
+                // Determine category color badges
+                let badgeColor = "bg-blue-100 text-blue-800";
+                if(item.category === "Environment") badgeColor = "bg-emerald-100 text-emerald-800";
+                if(item.category === "Animal Welfare") badgeColor = "bg-amber-100 text-amber-800";
+                if(item.category === "Healthcare") badgeColor = "bg-red-100 text-red-800";
+
+                const cardHTML = `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}">${item.category}</span>
+                                <span class="text-xs text-gray-500 font-semibold">Min. Age: ${item.age}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-1">${item.title}</h3>
+                            <p class="text-sm font-medium text-blue-600 mb-3">${item.org}</p>
+                            <p class="text-gray-600 text-sm line-clamp-3">${item.desc}</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center text-xs text-gray-500">
+                            <span>📍 ${item.location}</span>
+                            <button onclick="alert('Hours tracked! (Feature coming soon)')" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-1.5 px-3 rounded-lg transition">Apply</button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        // Function that filters the cards when you search or drop down
+        function filterOpportunities() {
+            const searchText = document.getElementById("searchInput").value.toLowerCase();
+            const selectedCategory = document.getElementById("categoryFilter").value;
+            const selectedAge = document.getElementById("ageFilter").value;
+
+            const filtered = opportunities.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(searchText) || item.desc.toLowerCase().includes(searchText) || item.org.toLowerCase().includes(searchText);
+                const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+                const matchesAge = selectedAge === "all" || item.age >= parseInt(selectedAge);
+
+                return matchesSearch && matchesCategory && matchesAge;
+            });
+
+            displayOpportunities(filtered);
+        }
+
+        // Run this when the page loads for the first time
+        displayOpportunities(opportunities);
+    </script>
 </body>
 </html>
