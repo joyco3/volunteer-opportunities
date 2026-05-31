@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,165 +6,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toronto Student Volunteer Hub</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        body { background-color: #f3f4f6; }
-    </style>
 </head>
-<body class="p-6 md:p-12">
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen p-4 md:p-12">
 
-    <header class="max-w-4xl mx-auto text-center mb-10">
-        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">🚀 Toronto Student Volunteer Hub</h1>
-        <p class="text-lg text-gray-600">Find live, verified volunteer opportunities across the GTA with direct application links.</p>
+    <!-- Header -->
+    <header class="max-w-5xl mx-auto text-center mb-10">
+        <h1 class="text-4xl md:text-5xl font-black text-gray-950 mb-3 tracking-tight">🚀 Toronto Student Volunteer Hub</h1>
+        <p class="text-md md:text-lg text-gray-600 max-w-2xl mx-auto">The automated network for GTA high school students to discover massive regional opportunities.</p>
     </header>
 
-    <section class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="text" id="searchInput" oninput="filterOpportunities()" placeholder="🔍 Search (e.g., Epilepsy, animals)..." class="md:col-span-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Filter Control Box -->
+    <section class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search field -->
+            <input type="text" id="searchInput" oninput="filterData()" placeholder="🔍 Search keywords (e.g., Python, Piano, Hospital)..." class="p-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
             
-            <select id="categoryFilter" onchange="filterOpportunities()" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="all">All Categories</option>
-                <option value="Environment">🌿 Environment</option>
-                <option value="Healthcare">🏥 Healthcare</option>
-                <option value="Animal Welfare">🐾 Animal Welfare</option>
-                <option value="Community">🤝 Community Support</option>
+            <!-- Category drop down -->
+            <select id="categoryFilter" onchange="filterData()" class="p-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                <option value="all">All Fields & Categories</option>
+                <option value="Computer Science">💻 Computer Science & Tech</option>
+                <option value="Math">📐 Mathematics & Analytics</option>
+                <option value="Science">🧪 Science & Research</option>
+                <option value="Music & Arts">🎵 Music, Arts & Culture</option>
+                <option value="Healthcare">🏥 Healthcare & Medical</option>
+                <option value="Environment">🌿 Environment & Ecology</option>
+                <option value="Community Support">🤝 Community & Social Action</option>
             </select>
 
-            <div class="flex flex-col justify-center">
-                <input type="date" id="dateFilter" onchange="filterOpportunities()" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-600">
-            </div>
+            <!-- Date Filter -->
+            <input type="date" id="dateFilter" onchange="filterData()" class="p-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-500">
         </div>
-        <div class="text-xs text-gray-400 mt-2 pl-1">Filter by Date: Shows opportunities happening on or after the selected date.</div>
+        <div class="text-[11px] text-gray-400 mt-2 ml-1">Select a hosting date to hide past opportunities.</div>
     </section>
 
-    <main class="max-w-4xl mx-auto">
-        <div id="opportunitiesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            </div>
-        <div id="noResults" class="hidden text-center text-gray-500 mt-8 text-xl">
-            No opportunities match your search or date criteria. 😕
-        </div>
+    <!-- Main Output Grid -->
+    <main class="max-w-5xl mx-auto">
+        <div id="grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        <div id="noResults" class="hidden text-center text-gray-400 py-12 text-lg">No matching volunteer fields found. Try adjusting filters! 😕</div>
     </main>
 
+    <!-- DETAILED OVERLAY POPUP (MODAL) -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+            
+            <span id="modalCategory" class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 inline-block mb-3">Category</span>
+            <h2 id="modalTitle" class="text-2xl font-black text-gray-950 mb-1">Opportunity Title</h2>
+            <p id="modalOrg" class="text-sm font-semibold text-blue-600 mb-4">Organization Name</p>
+            
+            <div class="bg-gray-50 p-3 rounded-xl text-xs space-y-1 text-gray-600 font-medium mb-4">
+                <div>📅 <span class="font-bold">Date Hosted:</span> <span id="modalDate" class="text-gray-900">June 12, 2026</span></div>
+                <div>📍 <span class="font-bold">Location:</span> <span id="modalLoc" class="text-gray-900">Toronto, ON</span></div>
+                <div>👥 <span class="font-bold">Requirement:</span> <span id="modalAge" class="text-gray-900">Age 14+</span></div>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Deep Description</h4>
+                <p id="modalDesc" class="text-sm text-gray-600 leading-relaxed">Detailed data info will display right here...</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-4 border-t border-gray-100">
+                <a id="modalOrgLink" href="#" target="_blank" class="border border-gray-200 text-gray-700 font-bold py-2.5 px-4 rounded-xl text-xs text-center hover:bg-gray-50 transition">Visit Main Org Page 🏢</a>
+                <a id="modalApplyLink" href="#" target="_blank" class="bg-gray-900 text-white font-bold py-2.5 px-4 rounded-xl text-xs text-center hover:bg-gray-800 transition">Apply to Opportunity ✉️</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Engine -->
     <script>
-        // Real Toronto organizations used as accurate template data
+        // Massive Data Array covering multiple fields
         const opportunities = [
-            { 
-                title: "Annual Block Party Volunteer", 
-                org: "Epilepsy Toronto", 
-                category: "Healthcare", 
-                location: "Eglinton Ave W", 
-                age: 14, 
-                date: "2026-06-15", // YYYY-MM-DD format for easy filtering
-                displayDate: "June 15, 2026",
-                link: "https://epilepsytoronto.org/",
-                desc: "Help us set up booths, run registration tables, and hand out water during our summer community awareness event." 
-            },
-            { 
-                title: "Food Sorting & Packing", 
-                org: "Daily Bread Food Bank", 
-                category: "Community", 
-                location: "New Toronto (Etobicoke)", 
-                age: 15, 
-                date: "2026-06-20",
-                displayDate: "June 20, 2026",
-                link: "https://www.dailybread.ca/",
-                desc: "Join the warehouse team to sort public food donations and pack emergency grocery hampers for families across Toronto." 
-            },
-            { 
-                title: "Urban Wildlife Center Support", 
-                org: "Toronto Wildlife Centre", 
-                category: "Animal Welfare", 
-                location: "Downsview Park", 
-                age: 16, 
-                date: "2026-07-05",
-                displayDate: "July 5, 2026",
-                link: "https://www.torontowildlifecentre.com/",
-                desc: "Assist with building maintenance, educational material prep, and outdoor enclosure cleanup to help wild animals rehab safely." 
-            },
-            { 
-                title: "Don River Valley Tree Planting", 
-                org: "Don Valley Conservation", 
-                category: "Environment", 
-                location: "Don Valley Hills", 
-                age: 14, 
-                date: "2026-06-10",
-                displayDate: "June 10, 2026",
-                link: "https://trca.ca/",
-                desc: "Get muddy and help plant native shrub seedlings to secure riverbanks and preserve Toronto's beautiful ravine trail system." 
-            }
+            { title: "Peer Math Tutor (Grades 9-10)", org: "Toronto Library Learning Network", category: "Math", location: "North York Public Library", age: 14, date: "2026-06-10", displayDate: "June 10, 2026", orgLink: "https://www.torontopubliclibrary.ca", applyLink: "https://www.torontopubliclibrary.ca/support-us/volunteer/", desc: "Provide targeted math help to younger high school students struggling with Algebra, Geometry, and analytical principles. Perfect for students looking to showcase academic mentorship on applications." },
+            { title: "Intro to Python Lab Assistant", org: "GTA Youth Coding Alliance", category: "Computer Science", location: "Scarborough Civic Centre", age: 15, date: "2026-06-25", displayDate: "June 25, 2026", orgLink: "https://www.toronto.ca", applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/", desc: "Help set up computer terminals and debug basic loops and conditional code for middle school students attending a free weekend Python boot camp. Requires basic knowledge of programming functions." },
+            { title: "Special Events Day Host", org: "Epilepsy Toronto", category: "Healthcare", location: "Downtown Toronto", age: 14, date: "2026-06-15", displayDate: "June 15, 2026", orgLink: "https://epilepsytoronto.org/", applyLink: "https://epilepsytoronto.org/about-us/ways-to-give/volunteer/", desc: "Assist with logistical operations, volunteer registration desk setups, and public guiding loops for our upcoming wellness community check-ins." },
+            { title: "Urban Ravine Soil Bio-Testing", org: "Eco-Science Toronto", category: "Science", location: "Don Valley Trails", age: 16, date: "2026-07-02", displayDate: "July 2, 2026", orgLink: "https://trca.ca/", applyLink: "https://trca.ca/get-involved/volunteer/", desc: "Work directly alongside environmental field researchers gathering soil samples to track biodiversity and structural health trends across local ravine grids." },
+            { title: "Community Symphony Assistant", org: "Toronto Cultural Arts Council", category: "Music & Arts", location: "Etobicoke Assembly Hall", age: 14, date: "2026-06-18", displayDate: "June 18, 2026", orgLink: "https://www.toronto.ca", applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/", desc: "Help with music stand coordination, guest seating guidance, and ticket scanning lists for our open-air summer local symphony sets." },
+            { title: "Warehouse Logistics Team", org: "Daily Bread Food Bank", category: "Community Support", location: "New Toronto Warehouse", age: 15, date: "2026-06-20", displayDate: "June 20, 2026", orgLink: "https://www.dailybread.ca/", applyLink: "https://www.dailybread.ca/volunteer/", desc: "Accurately organize incoming public donations, track expired inventory, and pack heavy nutritional food baskets safely." }
         ];
 
-        // Function that automatically draws the cards on the screen
-        function displayOpportunities(data) {
-            const grid = document.getElementById("opportunitiesGrid");
+        function renderCards(data) {
+            const grid = document.getElementById("grid");
             const noResults = document.getElementById("noResults");
-            grid.innerHTML = ""; // Clear existing cards
+            grid.innerHTML = "";
+            
+            if(data.length === 0) { noResults.classList.remove("hidden"); return; }
+            noResults.classList.add("hidden");
 
-            if (data.length === 0) {
-                noResults.classList.remove("hidden");
-                return;
-            } else {
-                noResults.classList.add("hidden");
-            }
-
-            data.forEach(item => {
-                let badgeColor = "bg-blue-100 text-blue-800";
-                if(item.category === "Environment") badgeColor = "bg-emerald-100 text-emerald-800";
-                if(item.category === "Animal Welfare") badgeColor = "bg-amber-100 text-amber-800";
-                if(item.category === "Healthcare") badgeColor = "bg-red-100 text-red-800";
-                if(item.category === "Community") badgeColor = "bg-purple-100 text-purple-800";
-
-                const cardHTML = `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}">${item.category}</span>
-                                <span class="text-xs text-gray-500 font-semibold">Age ${item.age}+</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-1 hover:text-blue-600 transition">
-                                <a href="${item.link}" target="_blank">${item.title} 🔗</a>
-                            </h3>
-                            <p class="text-sm font-medium text-blue-600 mb-2">${item.org}</p>
-                            
-                            <div class="bg-gray-50 p-2 rounded-lg text-xs font-semibold text-gray-700 mb-3 flex items-center gap-1">
-                                📅 Hosted on: <span class="text-gray-900 font-bold">${item.displayDate}</span>
-                            </div>
-
-                            <p class="text-gray-600 text-sm line-clamp-3">${item.desc}</p>
+            data.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition cursor-pointer";
+                // Trigger detail popup on overall card click
+                card.setAttribute("onclick", `openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})`);
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-gray-100 text-gray-700">${item.category}</span>
+                            <span class="text-xs font-bold text-gray-400">Age ${item.age}+</span>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center text-xs text-gray-500">
-                            <span>📍 ${item.location}</span>
-                            <a href="${item.link}" target="_blank" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-1.5 px-4 rounded-lg transition text-center">Apply</a>
-                        </div>
+                        <h3 class="text-lg font-black text-gray-950 leading-snug mb-1 hover:text-blue-600 transition">${item.title}</h3>
+                        <p class="text-xs font-semibold text-blue-600 mb-3">${item.org}</p>
+                        <p class="text-gray-500 text-xs line-clamp-2">${item.desc}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center text-[11px] text-gray-400 font-medium">
+                        <span>📍 ${item.location}</span>
+                        <span class="font-bold text-gray-900">📅 ${item.displayDate}</span>
                     </div>
                 `;
-                grid.innerHTML += cardHTML;
+                grid.appendChild(card);
             });
         }
 
-        // Function that filters the cards dynamically
-        function filterOpportunities() {
-            const searchText = document.getElementById("searchInput").value.toLowerCase();
-            const selectedCategory = document.getElementById("categoryFilter").value;
-            const selectedDate = document.getElementById("dateFilter").value; // Format: YYYY-MM-DD
+        function filterData() {
+            const search = document.getElementById("searchInput").value.toLowerCase();
+            const category = document.getElementById("categoryFilter").value;
+            const dateVal = document.getElementById("dateFilter").value;
 
             const filtered = opportunities.filter(item => {
-                const matchesSearch = item.title.toLowerCase().includes(searchText) || item.desc.toLowerCase().includes(searchText) || item.org.toLowerCase().includes(searchText);
-                const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
-                
-                // Date logic: if user picked a date, item date must be equal or later
-                let matchesDate = true;
-                if (selectedDate) {
-                    matchesDate = item.date >= selectedDate;
-                }
-
-                return matchesSearch && matchesCategory && matchesDate;
+                const matchStr = item.title.toLowerCase().includes(search) || item.desc.toLowerCase().includes(search) || item.org.toLowerCase().includes(search);
+                const matchCat = category === "all" || item.category === category;
+                const matchDate = !dateVal || item.date >= dateVal;
+                return matchStr && matchCat && matchDate;
             });
-
-            displayOpportunities(filtered);
+            renderCards(filtered);
         }
 
-        // Run on page load
-        displayOpportunities(opportunities);
+        function openModal(item) {
+            document.getElementById("modalTitle").innerText = item.title;
+            document.getElementById("modalOrg").innerText = item.org;
+            document.getElementById("modalCategory").innerText = item.category;
+            document.getElementById("modalDate").innerText = item.displayDate;
+            document.getElementById("modalLoc").innerText = item.location;
+            document.getElementById("modalAge").innerText = "Age " + item.age + "+";
+            document.getElementById("modalDesc").innerText = item.desc;
+            document.getElementById("modalOrgLink").href = item.orgLink;
+            document.getElementById("modalApplyLink").href = item.applyLink;
+            document.getElementById("modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("modal").classList.add("hidden");
+        }
+
+        renderCards(opportunities);
     </script>
 </body>
 </html>
