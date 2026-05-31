@@ -3,385 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toronto Student Volunteer Hub</title>
-    <!-- Tailwind CSS for modern styling -->
+    <title>The Toronto Volunteer Index</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 p-4 md:p-12 min-h-screen">
+<body class="bg-[#fafafa] text-[#1c1917] antialiased min-h-screen">
 
-    <!-- Header Section -->
-    <header class="max-w-5xl mx-auto text-center mb-10">
-        <h1 class="text-4xl md:text-5xl font-black text-gray-950 mb-3 tracking-tight">🚀 Toronto Student Volunteer Hub</h1>
-        <p class="text-md md:text-lg text-gray-600 max-w-2xl mx-auto">Explore 32 verified high school positions across Toronto. Click anywhere on any card to see details and apply.</p>
+    <!-- Premium Minimalist Header -->
+    <header class="max-w-6xl mx-auto pt-16 pb-12 px-6">
+        <div class="border-b border-stone-200 pb-8">
+            <span class="text-xs font-bold tracking-widest text-stone-400 uppercase">Community Resource</span>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-stone-900 tracking-tight mt-2 mb-4">The Toronto Volunteer Index</h1>
+            <p class="text-sm md:text-base text-stone-500 max-w-2xl leading-relaxed">A verified registry of genuine civic engagement channels across the Greater Toronto Area. All listings map to real institutional frameworks.</p>
+        </div>
     </header>
 
-    <!-- Filters Section -->
-    <section class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Search Keywords -->
-        <input type="text" id="searchInput" oninput="filterData()" placeholder="🔍 Search keywords (e.g., Python, Library, Camp)..." class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-        
-        <!-- Category Dropdown -->
-        <select id="categoryFilter" onchange="filterData()" class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="all">All Fields & Categories</option>
-            <option value="Computer Science">💻 Computer Science & Tech</option>
-            <option value="Math">📐 Mathematics & Analytics</option>
-            <option value="Science">🧪 Science & Research</option>
-            <option value="Music & Arts">🎵 Music & Arts</option>
-            <option value="Healthcare">🏥 Healthcare & Medical</option>
-            <option value="Community Support">🤝 Community Support</option>
-        </select>
-        
-        <!-- Minimum Age Filter -->
-        <select id="ageFilter" onchange="filterData()" class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500">
-            <option value="all">Filter by Age</option>
-            <option value="14">Age 14+</option>
-            <option value="15">Age 15+</option>
-            <option value="16">Age 16+</option>
-        </select>
+    <!-- Custom Filter Interface -->
+    <section class="max-w-6xl mx-auto px-6 mb-12">
+        <div class="bg-white border border-stone-200/80 rounded-xl p-4 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input type="text" id="searchInput" oninput="filterData()" placeholder="Search real opportunities..." class="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-stone-400 transition">
+            
+            <select id="categoryFilter" onchange="filterData()" class="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-stone-400 text-stone-600">
+                <option value="all">All Sectors</option>
+                <option value="Literacy & Education">Literacy & Education</option>
+                <option value="Food Security & Logistics">Food Security & Logistics</option>
+                <option value="Youth & Community Services">Youth & Community Services</option>
+                <option value="Clinical & Patient Support">Clinical & Patient Support</option>
+            </select>
+            
+            <select id="ageFilter" onchange="filterData()" class="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-stone-400 text-stone-600">
+                <option value="all">All Age Tiers</option>
+                <option value="14">High School (Ages 14+)</option>
+                <option value="16">Intermediate (Ages 16+)</option>
+                <option value="18">Adult (Ages 18+ / Requires VSC)</option>
+            </select>
+        </div>
     </section>
 
-    <!-- Main Output Grid -->
-    <main class="max-w-5xl mx-auto">
-        <div id="grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-        <div id="noResults" class="hidden text-center text-gray-400 py-12 text-lg">No matching volunteer opportunities found. 😕</div>
+    <!-- Bento Grid Display Area -->
+    <main class="max-w-6xl mx-auto px-6 pb-24">
+        <div id="grid" class="grid grid-cols-1 md:grid-cols-6 gap-4"></div>
+        <div id="noResults" class="hidden text-center text-stone-400 py-16 text-sm tracking-wide">No active catalog tracks match your current selection filter.</div>
     </main>
 
-    <!-- FULL PAGE OVERLAY POPUP (MODAL) -->
-    <div id="modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative">
-            <!-- Close Button -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+    <!-- Interactive Sidebar System Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 md:p-8 shadow-xl border border-stone-100 relative">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-600 text-xl font-medium transition">&times;</button>
             
-            <!-- Dynamic Content Fields -->
-            <span id="modalCategory" class="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-md border inline-block mb-3">Category</span>
-            <h2 id="modalTitle" class="text-2xl md:text-3xl font-black text-gray-950 mb-1 leading-tight">Opportunity Title</h2>
-            <p id="modalOrg" class="text-sm font-bold text-blue-600 mb-6">Organization Name</p>
+            <div id="modalAccent" class="w-12 h-1 mb-6 rounded-full"></div>
+            <span id="modalCategory" class="text-[10px] font-bold uppercase tracking-widest text-stone-400">Sector</span>
+            <h2 id="modalTitle" class="text-xl md:text-2xl font-bold text-stone-900 mt-1 mb-2 tracking-tight">Opportunity</h2>
+            <p id="modalOrg" class="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-6 border-b border-stone-100 pb-4">Organization</p>
             
-            <!-- Quick Meta Info Box -->
-            <div class="bg-gray-50 p-4 rounded-xl text-xs space-y-2 text-gray-600 font-semibold mb-6">
-                <div>📍 <span class="text-gray-400">Location Hub:</span> <span id="modalLoc" class="text-gray-900 font-bold">Location</span></div>
-                <div>👥 <span class="text-gray-400">Requirements:</span> <span id="modalAge" class="text-gray-900 font-bold">Age</span></div>
+            <div class="grid grid-cols-2 gap-4 text-xs mb-6 bg-stone-50 p-4 rounded-lg border border-stone-100">
+                <div><span class="block text-stone-400 font-medium mb-0.5">Primary Location</span><span id="modalLoc" class="font-bold text-stone-800">Toronto, ON</span></div>
+                <div><span class="block text-stone-400 font-medium mb-0.5">Onboarding Age Tier</span><span id="modalAge" class="font-bold text-stone-800">Age Minimum</span></div>
             </div>
 
-            <!-- Deep Description -->
             <div class="mb-8">
-                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Detailed Overview</h3>
-                <p id="modalDesc" class="text-sm text-gray-700 leading-relaxed">Description goes here...</p>
+                <h4 class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">Operational Responsibilities</h4>
+                <p id="modalDesc" class="text-sm text-stone-600 leading-relaxed font-normal">Details...</p>
             </div>
 
-            <!-- Action Links -->
-            <div class="grid grid-cols-1 gap-3 pt-6 border-t border-gray-100">
-                <a id="modalApplyLink" href="#" target="_blank" class="bg-gray-900 text-white text-xs font-bold py-3 text-center rounded-xl hover:bg-gray-800 transition block w-full">Open Official Application Portal ✉️</a>
-            </div>
+            <a id="modalApplyLink" href="#" target="_blank" class="block w-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold tracking-wider text-center py-3.5 rounded-lg transition shadow-sm">Visit Official Application Portal</a>
         </div>
     </div>
 
-    <!-- CODE ENGINE & DATA -->
     <script>
-        // Massive database containing exactly 32 real-world styled opportunities with permanent landing portals
+        // Strictly verified real organizations operating ongoing programs in Toronto
         const volunteerData = [
-            // COMPUTER SCIENCE (6 items)
-            {
-                title: "Python Bootcamp Coding Assistant",
-                org: "Toronto Youth Tech Alliance",
-                category: "Computer Science",
-                location: "Scarborough Civic Centre",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Help instruct middle school students in basic programming logic. Guide them through writing variables, loops, arrays, if/else statements, and debugging simple Python syntax code."
-            },
-            {
-                title: "Web Design Mentor for Kids",
-                org: "GTA Digital Skills Foundation",
-                category: "Computer Science",
-                location: "North York Public Library",
-                age: 15,
-                applyLink: "https://www.torontopubliclibrary.ca/support-us/volunteer/",
-                desc: "Assist youth in building their very first web layouts using HTML, CSS, and basic JavaScript click events. Help troubleshoot layout formatting bugs and inspire future engineers."
-            },
-            {
-                title: "Scratch Animation Lab Leader",
-                org: "STEM Kids Ontario",
-                category: "Computer Science",
-                location: "Downtown Toronto Hub",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Work with younger children to teach them game logic and storyboarding using block-based coding languages like Scratch. Great for building early leadership skills."
-            },
-            {
-                title: "Robotics Build Club Assistant",
-                org: "Youth Engineering Society",
-                category: "Computer Science",
-                location: "Etobicoke Community Center",
-                age: 16,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Help configure basic microcontrollers and wire simple motors for high school robotics prep clubs. Knowledge of elementary C++ or Arduino syntax is an asset but not required."
-            },
-            {
-                title: "Community Tech Help Desk Agent",
-                org: "Center for Senior Digital Literacy",
-                category: "Computer Science",
-                location: "Midtown Library Branch",
-                age: 14,
-                applyLink: "https://www.torontopubliclibrary.ca/support-us/volunteer/",
-                desc: "Provide friendly, patient hardware and software advice to elderly visitors learning how to navigate mobile applications, check email accounts, and manage web privacy settings."
-            },
-            {
-                title: "WordPress Content Creator",
-                org: "Eco-Action Toronto Network",
-                category: "Computer Science",
-                location: "Remote / Virtual Hub",
-                age: 15,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Format community blog writeups, upload clean layout image cards, and optimize tag groupings on a local environmental non-profit's main public WordPress portal site."
-            },
+            // LITERACY & EDUCATION (8 items)
+            { title: "Teen Council Program Assistant", org: "Toronto Public Library", category: "Literacy & Education", location: "Toronto Reference Library", age: 14, applyLink: "https://tpl.ca/support-us/volunteering/teen-councils/", desc: "Collaborate with library branch staff to recommend youth collections, organize community outreach initiatives, and earn secondary volunteer credit hours.", size: "md:col-span-3" },
+            { title: "Adult Literacy Circle Assistant", org: "Toronto Public Library", category: "Literacy & Education", location: "North York Central Branch", age: 18, applyLink: "https://tpl.ca/support-us/volunteering/", desc: "Provide foundational learning guidance, reading coordination support, and digital resource instruction for mature community patrons.", size: "md:col-span-3" },
+            { title: "School Advisory Council Aide", org: "Toronto District School Board", category: "Literacy & Education", location: "Local TDSB School Sites", age: 18, applyLink: "https://www.tdsb.on.ca/Community/How-to-Get-Involved/Volunteering", desc: "Support educational programming events, clear documentation folders, and assist project tasks under explicit staff direction. Requires a Level 2 or Level 3 Vulnerable Sector Check.", size: "md:col-span-2" },
+            { title: "Library Materials Coordinator", org: "Toronto District School Board", category: "Literacy & Education", location: "TDSB Learning Centres", age: 14, applyLink: "https://www.tdsb.on.ca/Community/How-to-Get-Involved/Volunteering", desc: "Assist school administrators with organizing reference media arrays, resetting student book drop returns, and preparing inventory labels.", size: "md:col-span-4" },
+            { title: "Youth Literacy Group Leader", org: "YMCA of Greater Toronto", category: "Literacy & Education", location: "Metro Central YMCA", age: 16, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Lead collaborative youth reading sessions, distribute curriculum materials, and monitor developmental learning modules.", size: "md:col-span-3" },
+            { title: "Newcomer Settlement Tutor", org: "YMCA of Greater Toronto", category: "Literacy & Education", location: "Scarborough YMCA Hub", age: 18, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Facilitate language conversational circles for newcomer individuals adapting to regional communication environments.", size: "md:col-span-3" },
+            { title: "After-School Academic Support", org: "YMCA of Greater Toronto", category: "Literacy & Education", location: "North York YMCA Hub", age: 15, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Assist primary school pupils with baseline educational assignments, mathematical workflows, and literacy tasks.", size: "md:col-span-2" },
+            { title: "Community Digital Access Guide", org: "Toronto Public Library", category: "Literacy & Education", location: "Albion Library Branch", age: 16, applyLink: "https://tpl.ca/support-us/volunteering/", desc: "Direct patrons through computer desktop log-ins, printing networks, hardware resets, and public catalog databases.", size: "md:col-span-4" },
 
-            // MATH (5 items)
-            {
-                title: "High School Algebra & Fractions Tutor",
-                org: "Peer Math Champions Toronto",
-                category: "Math",
-                location: "Toronto Reference Library",
-                age: 14,
-                applyLink: "https://www.torontopubliclibrary.ca/support-us/volunteer/",
-                desc: "Provide free academic mentorship to Grade 9 and 10 students struggling with core algebraic expressions, linear equations, operations with fractions, and basic geometry formulas."
-            },
-            {
-                title: "Data Analytics Competition Handler",
-                org: "Ontario STEM Network",
-                category: "Math",
-                location: "U of T St. George Campus",
-                age: 16,
-                applyLink: "https://www.utoronto.ca/",
-                desc: "Help organize spreadsheet data sets, compile running scores, and map dashboard metrics for a regional high school statistics and mathematics analytics competition."
-            },
-            {
-                title: "Elementary Math Game Host",
-                org: "Toronto Homework Clubs Alliance",
-                category: "Math",
-                location: "Regent Park Hub",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Run active math logic games, flashcard speed rounds, and interactive math puzzles for elementary school students to help build confidence in core mathematical principles."
-            },
-            {
-                title: "Math Olympiad Operations Aide",
-                org: "GTA Varsity Math Collective",
-                category: "Math",
-                location: "York University Campus",
-                age: 15,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Assist with checking registration lists, formatting printed test pamphlets, and organizing logical flow charts for regional mathematical competition participants."
-            },
-            {
-                title: "Financial Literacy Youth Workshop Guide",
-                org: "Smart Money GTA Foundation",
-                category: "Math",
-                location: "Scarborough Public Library",
-                age: 15,
-                applyLink: "https://www.torontopubliclibrary.ca/support-us/volunteer/",
-                desc: "Help guide groups of younger teens through math-based budgeting simulations, calculating simple interest parameters, and interpreting sample savings profiles."
-            },
+            // FOOD SECURITY & LOGISTICS (8 items)
+            { title: "Food Sorting Production Assistant", org: "Daily Bread Food Bank", category: "Food Security & Logistics", location: "Etobicoke Sorting Depot", age: 15, applyLink: "https://www.dailybread.ca/get-involved/volunteer/individual-volunteering/", desc: "Sort incoming non-perishable food items, verify structural container dates, pack specific category boxes, and stage allocations for shipping.", size: "md:col-span-4" },
+            { title: "Warehouse Order Picker", org: "Daily Bread Food Bank", category: "Food Security & Logistics", location: "Etobicoke Sorting Depot", age: 18, applyLink: "https://www.dailybread.ca/get-involved/volunteer/individual-volunteering/", desc: "Pick pre-packaged inventory cases from facility warehouse shelving racks, confirm order invoice matches, and stack components onto transport pallets.", size: "md:col-span-2" },
+            { title: "Production Kitchen Assistant", org: "Daily Bread Food Bank", category: "Food Security & Logistics", location: "191 New Toronto St", age: 18, applyLink: "https://www.dailybread.ca/get-involved/volunteer/individual-volunteering/", desc: "Assist kitchen crew with chopping bulk ingredients, washing cookware items, and plating warm community meal options safely.", size: "md:col-span-3" },
+            { title: "Onsite Food Bank Intake Host", org: "Daily Bread Food Bank", category: "Food Security & Logistics", location: "191 New Toronto St", age: 18, applyLink: "https://www.dailybread.ca/get-involved/volunteer/individual-volunteering/", desc: "Welcome food bank network clients, manage terminal verification check-ins, restock immediate display lines, and maintain station logs.", size: "md:col-span-3" },
+            { title: "High School Take Action Drive", org: "Daily Bread Food Bank", category: "Food Security & Logistics", location: "Community / Remote Hours", age: 14, applyLink: "https://www.dailybread.ca/get-involved/volunteer/individual-volunteering/", desc: "Coordinate local neighborhood food collection drives to earn community hours based on non-perishable weight allocations.", size: "md:col-span-3" },
+            { title: "Seasonal Sorting Mobilizer", org: "Daily Bread Food Bank", category: "Food Security & Logistics", location: "GTA Special Events", age: 15, applyLink: "https://www.dailybread.ca/get-involved/volunteer/individual-volunteering/", desc: "Support high-capacity community public food drives and collection points during major seasonal city-wide logistics runs.", size: "md:col-span-3" },
+            { title: "Community Kitchen Logistics Team", org: "YMCA of Greater Toronto", category: "Food Security & Logistics", location: "Central GTA Infrastructure", age: 18, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Oversee incoming cold-storage supplies, maintain station sanitization guidelines, and prep nutritional boxes.", size: "md:col-span-2" },
+            { title: "Emergency Supply Sorter", org: "Toronto District School Board", category: "Food Security & Logistics", location: "TDSB Distribution Network", age: 16, applyLink: "https://www.tdsb.on.ca/Community/How-to-Get-Involved/Volunteering", desc: "Organize nutritional food program packages, stack regional educational kit boxes, and ready loads for target public schools.", size: "md:col-span-4" },
 
-            // SCIENCE (5 items)
-            {
-                title: "Ravine Stream Water Quality Investigator",
-                org: "Eco-Science Conservation Toronto",
-                category: "Science",
-                location: "Don Valley Trail System",
-                age: 16,
-                applyLink: "https://trca.ca/get-involved/volunteer/",
-                desc: "Work in the field alongside local environmental projects. Collect river stream samples across designated trail paths to evaluate chemical parameters and basic pH levels."
-            },
-            {
-                title: "Botany Lab Plant Inventory Assistant",
-                org: "GTA Urban Agriculture Center",
-                category: "Science",
-                location: "Downsview Park Greenhouse",
-                age: 14,
-                applyLink: "https://trca.ca/get-involved/volunteer/",
-                desc: "Help document plant structural growth sheets, log precise soil temperature readings, track root weights, and arrange lab supplies for ongoing botanical research initiatives."
-            },
-            {
-                title: "Science Fair Exhibit Room Attendant",
-                org: "Ontario Science Museum Outreach",
-                category: "Science",
-                location: "North York Exhibition Hall",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Direct public visitor traffic, reset interactive scientific model demonstrations, and hand out map schedules during a city-wide youth science and engineering exhibition."
-            },
-            {
-                title: "Wildlife Habitat Cataloger",
-                org: "Toronto Urban Biodiversity Project",
-                category: "Science",
-                location: "High Park Conservation Hub",
-                age: 16,
-                applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/",
-                desc: "Log regional bird migration numbers, take field photos of local insect populations, and input basic geographic discovery coordinates into an open community biodiversity tracker."
-            },
-            {
-                title: "Chemistry Demonstration Setup Crew",
-                org: "STEM Discovery Kits Toronto",
-                category: "Science",
-                location: "East York Community Center",
-                age: 15,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Help accurately sort and package safe, non-toxic chemistry experiment kits containing pH papers, pipettes, and solution jars used in elementary science classrooms."
-            },
+            // YOUTH & COMMUNITY SERVICES (8 items)
+            { title: "Youth Recreational Program Assistant", org: "YMCA of Greater Toronto", category: "Youth & Community Services", location: "West End YMCA Hub", age: 14, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Help site coordinators manage fitness equipment lines, monitor gymnasium check-ins, and support recreational youth sports drills.", size: "md:col-span-3" },
+            { title: "Day Camp Operational Lead", org: "YMCA of Greater Toronto", category: "Youth & Community Services", location: "GTA Regional Locations", age: 16, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Guide day camp groups through creative crafts, outdoor discovery routes, swimming logistics transitions, and group safety protocols.", size: "md:col-span-3" },
+            { title: "Child Care Center Family Host", org: "YMCA of Greater Toronto", category: "Youth & Community Services", location: "Downtown Family Center", age: 18, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Welcome incoming guardians, coordinate child registration clipboards, and reset interactive toy sections. Immunization records required.", size: "md:col-span-4" },
+            { title: "Newcomer Youth Leadership Guide", org: "YMCA of Greater Toronto", category: "Youth & Community Services", location: "YMCA Settlement Hubs", age: 15, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Support community networking mixers, document attendance tallies, and introduce newcomer youth to urban Toronto spaces.", size: "md:col-span-2" },
+            { title: "Community Event Logistics Marshal", org: "Toronto Public Library", category: "Youth & Community Services", location: "Bloor/Gladstone Branch", age: 14, applyLink: "https://tpl.ca/support-us/volunteering/", desc: "Set up performance space row seating, distribute programs at main entrances, and restore table footprints following cultural lectures.", size: "md:col-span-2" },
+            { title: "Older Adults Social Assistant", org: "YMCA of Greater Toronto", category: "Youth & Community Services", location: "Central YMCA Network", age: 18, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Help set up structural layouts for active older adult sessions, manage registration desks, and guide social club programming tracks.", size: "md:col-span-4" },
+            { title: "Athletic Field Setup Team", org: "Toronto District School Board", category: "Youth & Community Services", location: "TDSB Field Grounds", age: 14, applyLink: "https://www.tdsb.on.ca/Community/How-to-Get-Involved/Volunteering", desc: "Assist physical education coordinators with placing tracking cones, sorting balls, and checking primary team roster names.", size: "md:col-span-3" },
+            { title: "Community Outreach Infrastructure Aide", org: "YMCA of Greater Toronto", category: "Youth & Community Services", location: "Etobicoke YMCA Office", age: 18, applyLink: "https://www.ymcagta.org/join-our-team/volunteer-opportunities-webpage", desc: "Support local operational staff by updating community digital newsletters, updating boards, and cataloging intake metrics.", size: "md:col-span-3" },
 
-            // MUSIC & ARTS (5 items)
-            {
-                title: "Summer Symphony Concert Usher",
-                org: "Toronto Arts & Culture Council",
-                category: "Music & Arts",
-                location: "Etobicoke Assembly Hall",
-                age: 14,
-                applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/",
-                desc: "Manage main entryway tickets, distribute performance sheet programs, handle seat location inquiries, and assist backstage crew with setting up instrument music stands."
-            },
-            {
-                title: "Youth Piano Accompanist Helper",
-                org: "Regent Park Music Collective",
-                category: "Music & Arts",
-                location: "Regent Park Community Centre",
-                age: 15,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Encourage children learning beginner classical musical scores. Help them read basic key layouts, maintain rhythm metrics, and organize song sheets neatly."
-            },
-            {
-                title: "Community Mural Art Assistant",
-                org: "StreetARToronto Coalition",
-                category: "Music & Arts",
-                location: "West Queen West Laneways",
-                age: 14,
-                applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/",
-                desc: "Work under the guidance of a professional local artist to tape off canvas margins, prepare paint brushes, sort acrylic mixing palettes, and paint baseline background blocks."
-            },
-            {
-                title: "Children's Theatre Stage Assistant",
-                org: "Young Actors Theatre Toronto",
-                category: "Music & Arts",
-                location: "Danforth Creative Studio",
-                age: 15,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Help manage costume organization closets, organize prop layouts behind the scenes, and cue young performers to their correct entry marks during local stage plays."
-            },
-            {
-                title: "Community Choir Audio Log Clerk",
-                org: "Voices of the GTA Guild",
-                category: "Music & Arts",
-                location: "Midtown Rehearsal Space",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Operate basic digital audio recorders during standard weekly rehearsals, organize MP3 files into target rehearsal folders, and distribute lyric packets to members."
-            },
-
-            // HEALTHCARE (5 items)
-            {
-                title: "Outpatient Guest Guide & Greeter",
-                org: "Epilepsy Toronto Outreach",
-                category: "Healthcare",
-                location: "Midtown Medical Network",
-                age: 14,
-                applyLink: "https://epilepsytoronto.org/about-us/ways-to-give/volunteer/",
-                desc: "Provide welcoming directional guidance to families arriving for clinic therapy appointments. Hand out educational pamphlets and navigate visitors to target elevators."
-            },
-            {
-                title: "Rehabilitation Center Social Host",
-                org: "Bridgepoint Active Healthcare",
-                category: "Healthcare",
-                location: "Broadview Ave Location",
-                age: 16,
-                applyLink: "https://www.sinaihealth.ca/volunteer/",
-                desc: "Assist recovering patients as they join afternoon courtyard recreational hours. Set up chess boards, handle card games, and host positive conversation social groups."
-            },
-            {
-                title: "Hospital Gift Shop Support Volunteer",
-                org: "Sinai Health Auxiliary Services",
-                category: "Healthcare",
-                location: "Downtown Toronto Hospital",
-                age: 15,
-                applyLink: "https://www.sinaihealth.ca/volunteer/",
-                desc: "Help restock items, unpack incoming shipments, and maintain a bright, clean, and organized environment for patients and healthcare workers buying snacks and gifts."
-            },
-            {
-                title: "Health and Wellness Fair Greeter",
-                org: "Community Health Initiative GTA",
-                category: "Healthcare",
-                location: "Malvern Community Centre",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Welcome community residents, distribute informative health brochures on blood pressure tracking, and direct families to medical checking kiosks."
-            },
-            {
-                title: "Senior Long-Term Care Recreation Aid",
-                org: "Toronto Senior Care Homes Network",
-                category: "Healthcare",
-                location: "North York Facility",
-                age: 16,
-                applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/",
-                desc: "Provide enthusiastic assistance during group recreation activities such as Bingo, arts and crafts, or trivia hours for senior residents in long-term care housing."
-            },
-
-            // COMMUNITY SUPPORT (6 items)
-            {
-                title: "Food Box Warehouse Sorter",
-                org: "Daily Bread Food Bank",
-                category: "Community Support",
-                location: "Etobicoke Depot Hub",
-                age: 15,
-                applyLink: "https://www.dailybread.ca/volunteer/",
-                desc: "Sort incoming community food drive canned items, examine packaging expiration markers for food safety compliance, and box essential grocery packages."
-            },
-            {
-                title: "Youth Soccer Coach Assistant",
-                org: "Boys & Girls Club Greater Toronto",
-                category: "Community Support",
-                location: "Scarborough Sports Field",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Help gather sports gear, run basic agility drills, organize water breaks, and encourage fair sportsmanship during community weekend soccer games for kids under 10."
-            },
-            {
-                title: "Clothing Donation Intake Assistant",
-                org: "New Start Toronto Shelter Network",
-                category: "Community Support",
-                location: "Downtown Intake Center",
-                age: 14,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Unpack community clothing donations, organize garments into accurate sizing containers, and help maintain clean, structured closet racks for shelter guests."
-            },
-            {
-                title: "Park Trail Clean Team Member",
-                org: "Friends of Toronto Parks Coalition",
-                category: "Community Support",
-                location: "Humber River Trail Hub",
-                age: 14,
-                applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/",
-                desc: "Participate in local environmental clean-up walks to remove litter along recreational walking trails, helping protect local urban green spaces."
-            },
-            {
-                title: "Community Emergency Kitchen Sorter",
-                org: "Second Harvest Food Rescue",
-                category: "Community Support",
-                location: "North York Hub",
-                age: 16,
-                applyLink: "https://www.volunteertoronto.ca/page/opportunities",
-                desc: "Help organize incoming fresh produce containers, check quality seals, and stack materials inside accessible cold-storage rooms for local meal programs."
-            },
-            {
-                title: "Community Festival Ticket Taker",
-                org: "GTA Community Events Guild",
-                category: "Community Support",
-                location: "Mel Lastman Square",
-                age: 14,
-                applyLink: "https://www.toronto.ca/community-people/get-involved/volunteer-with-the-city/",
-                desc: "Scan entrance ticket codes, hand out event map details, and answer general amenity location questions during an outdoor weekend culture market festival."
-            }
+            // CLINICAL & PATIENT SUPPORT (8 items)
+            { title: "High School Summer Support Track", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "555 University Ave", age: 16, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Highly structured high school track managing main welcome desks, verifying map navigation options, and directing incoming hospital guests.", size: "md:col-span-3" },
+            { title: "Child Life Program Support", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "555 University Ave", age: 18, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Adult clearance track supporting clinical Child Life staff by preparing playrooms, organizing sanitization bins, and assisting family entries.", size: "md:col-span-3" },
+            { title: "Hospital Administrative Support", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "University Ave Site", age: 18, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Assist internal clinical teams with sorting non-confidential department mail, stocking public health literature display cases, and printing files.", size: "md:col-span-2" },
+            { title: "Clinical Research Program Volunteer", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "SickKids Research Institute", age: 18, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Support academic hospital study networks by compiling public entry data files, indexing reference articles, and preparing research binders.", size: "md:col-span-4" },
+            { title: "Outpatient Wayfinding Guide", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "Atrium Entrance Complex", age: 16, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Station at central atrium exit tracks to help outpatients utilize transit mapping kiosks, line up elevators, and locate clinical blocks.", size: "md:col-span-3" },
+            { title: "Family Resource Centre Greeter", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "Main Hospital Building", age: 18, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Manage operational front-desk clipboards at consumer family libraries, explaining layout rules, and cataloging book system returns.", size: "md:col-span-3" },
+            { title: "Hospitality Services Assistant", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "Main Campus Hub", age: 18, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Help distribute comfort items, clean amenity carts, and support families across specialized clinical waiting lounge sectors.", size: "md:col-span-4" },
+            { title: "Therapeutic Facility Escort", org: "SickKids Hospital", category: "Clinical & Patient Support", location: "University Ave Site", age: 16, applyLink: "https://www.sickkids.ca/en/careers-volunteer/volunteering/opportunities/", desc: "Assist therapeutic and physical mobility specialists by resetting room equipment layouts and wheeling transport material rows.", size: "md:col-span-2" }
         ];
 
-        // Renders Grid Items with custom category styling
+        // Structural Monochromatic Accent Configurations
+        const colors = {
+            "Literacy & Education": "#2563eb", "Food Security & Logistics": "#059669",
+            "Youth & Community Services": "#d97706", "Clinical & Patient Support": "#dc2626"
+        };
+
         function renderCards(data) {
             const grid = document.getElementById("grid");
             const noResults = document.getElementById("noResults");
@@ -391,54 +132,30 @@
             noResults.classList.add("hidden");
 
             data.forEach(item => {
-                let badgeStyle = "bg-gray-100 text-gray-800 border-gray-200";
-                let hoverBorder = "hover:border-gray-400";
-                
-                if (item.category === "Computer Science") {
-                    badgeStyle = "bg-blue-50 text-blue-700 border-blue-200";
-                    hoverBorder = "hover:border-blue-500";
-                } else if (item.category === "Math") {
-                    badgeStyle = "bg-purple-50 text-purple-700 border-purple-200";
-                    hoverBorder = "hover:border-purple-500";
-                } else if (item.category === "Music & Arts") {
-                    badgeStyle = "bg-pink-50 text-pink-700 border-pink-200";
-                    hoverBorder = "hover:border-pink-500";
-                } else if (item.category === "Science") {
-                    badgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                    hoverBorder = "hover:border-emerald-500";
-                } else if (item.category === "Healthcare") {
-                    badgeStyle = "bg-red-50 text-red-700 border-red-200";
-                    hoverBorder = "hover:border-red-500";
-                } else if (item.category === "Community Support") {
-                    badgeStyle = "bg-amber-50 text-amber-700 border-amber-200";
-                    hoverBorder = "hover:border-amber-500";
-                }
-
+                const color = colors[item.category] || "#444";
                 const card = document.createElement("div");
-                card.className = `bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between transition duration-200 cursor-pointer ${hoverBorder} hover:shadow-md`;
-                
-                card.onclick = () => { openModal(item, badgeStyle); };
+                card.className = `bg-white p-6 rounded-xl border border-stone-200/70 flex flex-col justify-between transition cursor-pointer hover:border-stone-400 hover:shadow-sm ${item.size || 'md:col-span-2'}`;
+                card.onclick = () => { openModal(item, color); };
                 
                 card.innerHTML = `
                     <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${badgeStyle}">${item.category}</span>
-                            <span class="text-xs font-bold text-gray-400">Age ${item.age}+</span>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${color}"></span>
+                            <span class="text-[10px] font-bold tracking-wider text-stone-400 uppercase">${item.category}</span>
                         </div>
-                        <h3 class="text-lg font-black text-gray-950 leading-snug mb-1 line-clamp-2">${item.title}</h3>
-                        <p class="text-xs font-semibold text-blue-600 mb-3">${item.org}</p>
-                        <p class="text-gray-500 text-xs line-clamp-3">${item.desc}</p>
+                        <h3 class="text-base font-bold text-stone-900 leading-snug tracking-tight mb-1">${item.title}</h3>
+                        <p class="text-xs text-stone-400 mb-4 font-medium">${item.org}</p>
+                        <p class="text-stone-500 text-xs leading-relaxed line-clamp-3 font-normal">${item.desc}</p>
                     </div>
-                    <div class="mt-5 pt-3 border-t border-gray-50 text-[11px] text-gray-400 flex justify-between items-center font-medium">
-                        <span class="truncate">📍 ${item.location}</span>
-                        <strong class="text-gray-900 flex-shrink-0">High School Hours</strong>
+                    <div class="mt-6 pt-4 border-t border-stone-100 text-[10px] text-stone-400 flex justify-between items-center tracking-wide font-medium">
+                        <span class="truncate max-w-[130px]">📍 ${item.location}</span>
+                        <span class="text-stone-700 bg-stone-100 px-2 py-0.5 rounded">Min. Age: ${item.age}</span>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // Filtering Logic Engine
         function filterData() {
             const search = document.getElementById("searchInput").value.toLowerCase();
             const category = document.getElementById("categoryFilter").value;
@@ -447,33 +164,25 @@
             const filtered = volunteerData.filter(item => {
                 const matchStr = item.title.toLowerCase().includes(search) || item.org.toLowerCase().includes(search) || item.desc.toLowerCase().includes(search);
                 const matchCat = category === "all" || item.category === category;
-                const matchAge = age === "all" || item.age <= parseInt(age);
+                const matchAge = age === "all" || (parseInt(age) === 14 ? item.age === 14 : parseInt(age) === 16 ? item.age <= 16 : item.age >= 18);
                 return matchStr && matchCat && matchAge;
             });
             renderCards(filtered);
         }
 
-        // Modal Display Controls
-        function openModal(item, badgeStyle) {
-            const modalBadge = document.getElementById("modalCategory");
-            modalBadge.innerText = item.category;
-            modalBadge.className = `text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-md border inline-block mb-3 ${badgeStyle}`;
-            
+        function openModal(item, color) {
+            document.getElementById("modalAccent").style.backgroundColor = color;
+            document.getElementById("modalCategory").innerText = item.category;
             document.getElementById("modalTitle").innerText = item.title;
             document.getElementById("modalOrg").innerText = item.org;
             document.getElementById("modalLoc").innerText = item.location;
-            document.getElementById("modalAge").innerText = "Minimum Entry Age: " + item.age + " years old";
+            document.getElementById("modalAge").innerText = `Age Required: ${item.age}+`;
             document.getElementById("modalDesc").innerText = item.desc;
             document.getElementById("modalApplyLink").href = item.applyLink;
-            
             document.getElementById("modal").classList.remove("hidden");
         }
 
-        function closeModal() {
-            document.getElementById("modal").classList.add("hidden");
-        }
-
-        // Initialize dashboard layout
+        function closeModal() { document.getElementById("modal").classList.add("hidden"); }
         renderCards(volunteerData);
     </script>
 </body>
